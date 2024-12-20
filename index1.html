@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النظام المحاسبي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            direction: rtl;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+            width: 80%;
+            margin: 30px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        input, select {
+            padding: 14px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+        input:focus, select:focus {
+            background-color: #f1f1f1;
+            outline: none;
+        }
+        input[type="submit"], button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 14px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #2980b9;
+        }
+        .message {
+            padding: 15px;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .result {
+            padding: 25px;
+            background-color: #f1f1f1;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        footer {
+            text-align: center;
+            background-color: #34495e;
+            color: white;
+            padding: 14px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            background-color: #2c3e50;
+            padding: 20px 0;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .nav-bar button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            margin: 0 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .nav-bar button:hover {
+            background-color: #2980b9;
+        }
+
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+
+        .debt-item, .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .debt-item span, .transaction-item span {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .debt-item button, .transaction-item button {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .debt-item button:hover, .transaction-item button:hover {
+            background-color: #c0392b;
+        }
+
+        /* شاشة الدخول */
+        #loginForm {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        #loginForm div {
+            width: 400px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #loginForm h2 {
+            font-family: 'Source Sans Pro', sans-serif;
+            color: #2c3e50;
+        }
+
+        #loginForm input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        #loginForm input[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #loginForm input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+        #loginErrorMessage {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="loginForm">
+    <div>
+        <h2>تسجيل الدخول</h2>
+        <input type="text" id="username" placeholder="اسم المستخدم" required>
+        <input type="password" id="password" placeholder="كلمة المرور" required>
+        <input type="submit" value="دخول" onclick="login()">
+        <div id="loginErrorMessage"></div>
+    </div>
+</div>
+
+<div id="accountingSystem" style="display:none;">
+    <header>
+    محاسبة صالون يوسف ستايل
+    </header>
+
+    <div class="nav-bar">
+        <button onclick="showSection('incomeExpenseSection')">الإيرادات والمصروفات</button>
+        <button onclick="showSection('debtsSection')">الديون</button>
+        <button onclick="showSection('profitLossSection')">الأرباح والخسائر</button>
+    </div>
+
+    <div class="container">
+        <div id="incomeExpenseSection" class="section active">
+            <h2>إدخال الإيرادات والمصروفات</h2>
+            <form id="transactionForm" onsubmit="addTransaction(event)">
+                <label for="description">الوصف:</label>
+                <input type="text" id="description" name="description" required>
+                <label for="amount">المبلغ:</label>
+                <input type="number" id="amount" name="amount" step="0.01" required>
+                <label for="type">النوع:</label>
+                <select id="type" name="type" required>
+                    <option value="income">إيرادات</option>
+                    <option value="expense">مصروفات</option>
+                </select>
+                <input type="submit" value="إضافة">
+            </form>
+
+            <h3>قائمة الإيرادات والمصروفات</h3>
+            <div id="transactionList"></div>
+        </div>
+
+        <div id="debtsSection" class="section">
+            <h2>قسم الديون</h2>
+            <form id="debtForm" onsubmit="addDebt(event)">
+                <label for="debtAmount">المبلغ:</label>
+                <input type="number" id="debtAmount" name="debtAmount" step="0.01" required>
+                <label for="debtType">النوع:</label>
+                <select id="debtType" name="debtType" required>
+                    <option value="owed">الديون التي عليّ</option>
+                    <option value="due">الديون التي لي</option>
+                </select>
+                <label for="debtorCreditorName">اسم الدائن/المدين:</label>
+                <input type="text" id="debtorCreditorName" name="debtorCreditorName" required>
+                <label for="debtStatus">حالة السداد:</label>
+                <select id="debtStatus" name="debtStatus" required>
+                    <option value="unpaid">لم يتم السداد</option>
+                    <option value="paid">تم السداد</option>
+                </select>
+                <input type="submit" value="إضافة دين">
+            </form>
+
+            <h3>الديون المسجلة</h3>
+            <div id="debtsList"></div>
+        </div>
+
+        <div id="profitLossSection" class="section">
+            <h2>فلترة قائمة الأرباح والخسائر</h2>
+            <form action="" method="POST">
+                <label for="start_date">من تاريخ:</label>
+                <input type="date" id="start_date" name="start_date" required>
+                <label for="end_date">إلى تاريخ:</label>
+                <input type="date" id="end_date" name="end_date" required>
+                <input type="submit" name="filter" value="تطبيق الفلتر">
+            </form>
+
+            <div class="result">
+                <h2>قائمة الأرباح والخسائر</h2>
+                <p>الإيرادات: <span id="totalIncome">0</span> دينار</p>
+                <p>المصروفات: <span id="totalExpense">0</span> دينار</p>
+                <p>الربح/الخسارة: <span id="profitLoss">0</span> دينار</p>
+            </div>
+        </div>
+
+        <button class="logout" onclick="logout()">تسجيل خروج</button>
+    </div>
+
+    <footer>
+        جميع الحقوق محفوظة &copy; 2024
+    </footer>
+</div>
+
+<script>
+// الجافا سكربت - حفظ الديون والإيرادات والمصروفات على localStorage
+
+let debts = JSON.parse(localStorage.getItem("debts")) || [];
+let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+
+function showSection(sectionId) {
+    const sections = document.querySelectorAll(".section");
+    sections.forEach(section => section.classList.remove("active"));
+    document.getElementById(sectionId).classList.add("active");
+}
+
+function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    if (username === "admin" && password === "password") {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("accountingSystem").style.display = "block";
+        updateDebts();
+        updateTransactions();
+        updateProfitLoss();
+    } else {
+        document.getElementById("loginErrorMessage").innerText = "اسم المستخدم أو كلمة المرور غير صحيحة";
+    }
+}
+
+function logout() {
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+    localStorage.setItem("debts", JSON.stringify(debts));
+    document.getElementById("loginForm").style.display = "flex";
+    document.getElementById("accountingSystem").style.display = "none";
+}
+
+function addTransaction(event) {
+    event.preventDefault();
+    const description = document.getElementById("description").value;
+    const amount = parseFloat(document.getElementById("amount").value);
+    const type = document.getElementById("type").value;
+
+    transactions.push({ description, amount, type });
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+
+    document.getElementById("description").value = '';
+    document.getElementById("amount").value = '';
+    document.getElementById("type").value = 'income';
+
+    updateTransactions();
+    updateProfitLoss();
+}
+
+function addDebt(event) {
+    event.preventDefault();
+    const amount = parseFloat(document.getElementById("debtAmount").value);
+    const type = document.getElementById("debtType").value;
+    const debtorCreditorName = document.getElementById("debtorCreditorName").value;
+    const status = document.getElementById("debtStatus").value;
+
+    // إضافة الدين إلى قسم الديون
+    debts.push({ amount, type, debtorCreditorName, status });
+    localStorage.setItem("debts", JSON.stringify(debts));
+
+    // إضافة الدين إلى الأرباح والخسائر
+    if (type === 'owed') {  // الديون التي لي تكون إيرادات
+        transactions.push({ description: `إيراد من ${debtorCreditorName}`, amount, type: 'income' });
+    } else {  // الديون التي عليّ تكون مصروفات
+        transactions.push({ description: `مصروفات لدين ${debtorCreditorName}`, amount, type: 'expense' });
+    }
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+
+    // تحديث واجهة المستخدم
+    document.getElementById("debtAmount").value = '';
+    document.getElementById("debtType").value = 'owed';
+    document.getElementById("debtorCreditorName").value = '';
+    document.getElementById("debtStatus").value = 'unpaid';
+
+    updateDebts();
+    updateTransactions();
+    updateProfitLoss();
+}
+
+function updateDebts() {
+    const debtsList = document.getElementById("debtsList");
+    debtsList.innerHTML = '';
+    debts.forEach(debt => {
+        const debtItem = document.createElement("div");
+        debtItem.className = "debt-item";
+        debtItem.innerHTML = `
+            <span>${debt.debtorCreditorName} - ${debt.amount} دينار</span>
+            <button onclick="removeDebt(${debts.indexOf(debt)})">حذف</button>
+        `;
+        debtsList.appendChild(debtItem);
+    });
+}
+
+function removeDebt(index) {
+    debts.splice(index, 1);
+    localStorage.setItem("debts", JSON.stringify(debts));
+    updateDebts();
+    updateProfitLoss();
+}
+
+function updateTransactions() {
+    const transactionList = document.getElementById("transactionList");
+    transactionList.innerHTML = '';
+    transactions.forEach(transaction => {
+        const transactionItem = document.createElement("div");
+        transactionItem.className = "transaction-item";
+        transactionItem.innerHTML = `
+            <span>${transaction.description} - ${transaction.amount} دينار (${transaction.type === 'income' ? 'إيراد' : 'مصروف' })</span>
+        `;
+        transactionList.appendChild(transactionItem);
+    });
+}
+
+function updateProfitLoss() {
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    transactions.forEach(transaction => {
+        if (transaction.type === 'income') {
+            totalIncome += transaction.amount;
+        } else {
+            totalExpense += transaction.amount;
+        }
+    });
+
+    const profitLoss = totalIncome - totalExpense;
+
+    document.getElementById("totalIncome").innerText = totalIncome.toFixed(2);
+    document.getElementById("totalExpense").innerText = totalExpense.toFixed(2);
+    document.getElementById("profitLoss").innerText = profitLoss.toFixed(2);
+}
+
+</script>
+
+</body>
+</html>
